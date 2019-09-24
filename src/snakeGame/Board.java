@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -20,9 +21,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Board extends JPanel implements ActionListener {
+public class Board extends JPanel implements ActionListener  {
 
-//    private final int B_WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.4);
+//  private final int B_WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.4);
 	private final int B_WIDTH = 845;
     private final int B_HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 0.5);
     private final int DOT_SIZE = 25; // the same pixel size as image
@@ -56,6 +57,7 @@ public class Board extends JPanel implements ActionListener {
     private Image title;
     private Image bg;
     private Image apple;
+    private Image appleResized;
     private Image head;
     private Image body;
     private Image l_head;
@@ -63,7 +65,7 @@ public class Board extends JPanel implements ActionListener {
     private Image u_head;
     private Image d_head;
     
-    public Board(int difficult) {
+    public Board(int difficult) throws HeadlessException {
     	DELAY = DELAY / difficult;    
     	setDifficulty(difficult);
         initBoard();
@@ -102,6 +104,7 @@ public class Board extends JPanel implements ActionListener {
     	//Apple image
         ImageIcon iia = new ImageIcon("resources/apple.png");
         apple = iia.getImage();
+        appleResized = apple.getScaledInstance(50, 50, 1);
         
         // title image
         title = Toolkit.getDefaultToolkit().createImage("resources/snaketitle.jpg");
@@ -152,10 +155,11 @@ public class Board extends JPanel implements ActionListener {
     	g.drawImage(title, 0, 0, null);
     	
         if (inGame) {        	
-        	statistics(g);
-            
+        	
+        	g.drawImage(appleResized,5,2,this);
         	g.drawImage(apple, apple_x, apple_y, this);
-
+        	statistics(g);
+        	
             for (int z = 0; z < dots; z++) {
                 if (z == 0) {
                     g.drawImage(head, x[z], y[z], this);
@@ -173,13 +177,15 @@ public class Board extends JPanel implements ActionListener {
     }
     
     private void statistics(Graphics g){
-    	String score_msg = "Difficulty: " + difficulty + " Score: " + score;
+//    	String score_msg = "Difficulty: " + difficulty + " Score: " + score;
+    	String score_msg = "" + score;
         Font small = new Font("Comic Sans", Font.BOLD, 24);
         FontMetrics metr = getFontMetrics(small);
-
-        g.setColor(Color.white);
+        
+        Color color = new Color(rand.nextInt());
+        g.setColor(color);
         g.setFont(small);
-        g.drawString(score_msg, 20, 35);
+        g.drawString(score_msg, 22, 40);
     }
 
     private void gameOver(Graphics g) {
@@ -273,7 +279,48 @@ public class Board extends JPanel implements ActionListener {
                 inGame = false;
             }
         }
+        
+        if (difficulty == "Impossible") {
+        	if (y[0] >= B_HEIGHT) {
+            	inGame = false;
+            }
+            
+            if (y[0] < 0) {
+            	inGame = false;
+            }	
 
+
+
+            if (x[0] >= B_WIDTH) {
+            	inGame = false;
+            }
+
+            if (x[0] < 0) {
+            	inGame = false;
+            }
+        }else {
+        	if (y[0] >= B_HEIGHT) {
+            	y[0] = title.getHeight(null) + 10;
+//            	y[0] = 0;
+            }
+            
+//            if (y[0] < 0) {
+//            	y[0] = B_HEIGHT;
+//            }	
+
+            if (y[0] < title.getHeight(null) + 10) {
+            	y[0] = B_HEIGHT;
+            }
+
+            if (x[0] >= B_WIDTH) {
+            	x[0] = 0;
+            }
+
+            if (x[0] < 0) {
+            	x[0] = B_WIDTH;
+            }
+        }
+        
         if (y[0] >= B_HEIGHT) {
         	y[0] = title.getHeight(null) + 10;
 //        	y[0] = 0;

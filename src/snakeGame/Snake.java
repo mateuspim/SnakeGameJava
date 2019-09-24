@@ -1,11 +1,13 @@
 package snakeGame;
 
 import java.awt.EventQueue;
+import java.awt.HeadlessException;
+
 import javax.swing.JFrame;
 
 public class Snake extends JFrame {
 
-    public Snake(int difficult) {
+    public Snake(int difficult) throws HeadlessException {
   
         initUI(difficult);
     }

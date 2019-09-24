@@ -34,8 +34,6 @@ public class StartGame {
 		{
 			JOptionPane.showMessageDialog(null, " Erro ao executar o programa! "+ exception.toString()) ;
 		}
-		
-		
 
 	}
 	
